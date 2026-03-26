@@ -1,0 +1,15 @@
+<span class="text-syntax-comment italic">// Route: GET /movies/{id}</span>
+<span class="text-syntax-keyword">async fn</span> <span class="text-syntax-fn">get_movie</span>(<span
+    class="text-syntax-type">Path</span>(id): <span class="text-syntax-type">Path</span>&lt;<span
+    class="text-syntax-type">i32</span>&gt;) -> String {
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-syntax-fn">format!</span>(<span
+    class="text-syntax-string">"Movie&nbsp;id:&nbsp;{}"</span>, id)<span
+    class="text-syntax-comment italic">//&nbsp;id&nbsp;is&nbsp;already&nbsp;i32</span>
+}
+
+<span class="text-syntax-comment italic">// Multiple path params → tuple</span>
+<span class="text-syntax-keyword">async fn</span> <span class="text-syntax-fn">get_role</span>(
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-syntax-type">Path</span>((movie_id, role_id)): <span
+    class="text-syntax-type">Path</span>&lt;(<span class="text-syntax-type">i32</span>, <span
+    class="text-syntax-type">i32</span>)&gt;,
+) {}

@@ -1,0 +1,16 @@
+<span class="text-syntax-keyword">async fn</span> <span class="text-syntax-fn">list_movies</span>(
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-syntax-type">State</span>(state): <span
+    class="text-syntax-type">State</span>&lt;<span class="text-syntax-type">AppState</span>&gt;,
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-syntax-type">Query</span>(filter): <span
+    class="text-syntax-type">Query</span>&lt;<span class="text-syntax-type">MovieFilter</span>&gt;,
+) -> <span class="text-syntax-type">Json</span>&lt;<span class="text-syntax-type">Vec</span>&lt;<span
+    class="text-syntax-type">Movie</span>&gt;&gt; {
+<span class="text-syntax-comment italic">// state.db is your PgPool</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-syntax-keyword">let</span> movies = sqlx::<span
+    class="text-syntax-fn">query_as!</span>(<span class="text-syntax-type">Movie</span>,&nbsp;<span
+    class="text-syntax-string">"SELECT * FROM movie"</span>)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.fetch_all(&amp;state.db)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.<span class="text-syntax-fn">await</span>.<span
+    class="text-syntax-fn">unwrap</span>();
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-syntax-type">Json</span>(movies)
+}

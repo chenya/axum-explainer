@@ -1,0 +1,16 @@
+<span class="text-syntax-fn">#[derive(Deserialize)]</span>
+<span class="text-syntax-keyword">struct</span> <span class="text-syntax-type">MovieFilter</span> {
+&nbsp;&nbsp;&nbsp;&nbsp;genre: <span class="text-syntax-type">Option</span>&lt;<span
+    class="text-syntax-type">String</span>&gt;,
+&nbsp;&nbsp;&nbsp;&nbsp;min_rating: <span class="text-syntax-type">Option</span>&lt;<span
+    class="text-syntax-type">f32</span>&gt;,
+}
+
+<span class="text-syntax-comment italic">// GET /movies?genre=Crime&amp;min_rating=8.0</span>
+<span class="text-syntax-keyword">async fn</span> <span class="text-syntax-fn">list_movies</span>(
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-syntax-type">Query</span>(f): <span
+    class="text-syntax-type">Query</span>&lt;<span class="text-syntax-type">MovieFilter</span>&gt;,
+) -> <span class="text-syntax-type">String</span> {
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-syntax-fn">format!</span>(<span
+    class="text-syntax-string">"Genre:&nbsp;{:?}"</span>, f.genre)
+}

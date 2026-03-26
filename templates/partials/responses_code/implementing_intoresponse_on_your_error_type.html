@@ -1,0 +1,30 @@
+<span class="text-syntax-punct">#[derive(Debug, thiserror::Error)]</span>
+<span class="text-syntax-keyword">pub enum</span> <span class="text-syntax-type">AppError</span> {
+    <span class="text-syntax-punct">#[error("not found: id={id}")]</span>
+    <span class="text-syntax-type">NotFound</span> { id: <span class="text-syntax-type">i32</span> },
+    <span class="text-syntax-punct">#[error("database error: {0}")]</span>
+    <span class="text-syntax-type">Database</span>(<span class="text-syntax-punct">#[from]</span> <span class="text-syntax-type">sqlx::Error</span>),
+}
+
+<span class="text-syntax-keyword">impl</span> <span class="text-syntax-type">IntoResponse</span> <span class="text-syntax-keyword">for</span> <span class="text-syntax-type">AppError</span> {
+  <span class="text-syntax-keyword">fn</span> <span class="text-syntax-fn">into_response</span>(<span class="text-syntax-keyword">self</span>) -> <span class="text-syntax-type">Response</span> {
+      <span class="text-syntax-keyword">match</span> &amp;<span class="text-syntax-keyword">self</span> {
+          <span class="text-syntax-type">AppError</span>::<span class="text-syntax-type">NotFound</span> { .. } =>
+              (<span class="text-syntax-type">StatusCode</span>::<span class="text-syntax-fn">NOT_FOUND</span>, <span class="text-syntax-keyword">self</span>.<span class="text-syntax-fn">to_string</span>()),
+          <span class="text-syntax-type">AppError</span>::<span class="text-syntax-type">Database</span>(_) =>
+              (<span class="text-syntax-type">StatusCode</span>::<span class="text-syntax-fn">INTERNAL_SERVER_ERROR</span>, <span class="text-syntax-keyword">self</span>.<span class="text-syntax-fn">to_string</span>()),
+      }.<span class="text-syntax-fn">into_response</span>()
+  }
+}
+
+<span class="text-syntax-comment italic">// Now every handler can return Result&lt;T, AppError&gt;</span>
+<span class="text-syntax-keyword">async fn</span> <span class="text-syntax-fn">get_movie</span>(
+  <span class="text-syntax-type">State</span>(state): <span class="text-syntax-type">State</span>&lt;<span class="text-syntax-type">AppState</span>&gt;,
+  <span class="text-syntax-type">Path</span>(id):     <span class="text-syntax-type">Path</span>&lt;<span class="text-syntax-type">i32</span>&gt;,
+) -> <span class="text-syntax-type">Result</span>&lt;<span class="text-syntax-type">Json</span>&lt;<span class="text-syntax-type">Movie</span>&gt;, <span class="text-syntax-type">AppError</span>&gt; {
+  sqlx::<span class="text-syntax-fn">query_as!</span>(<span class="text-syntax-type">Movie</span>, <span class="text-syntax-string">"SELECT * FROM movie WHERE id = $1"</span>, id)
+      .<span class="text-syntax-fn">fetch_optional</span>(&amp;state.db).<span class="text-syntax-keyword">await</span>
+      .<span class="text-syntax-fn">map_err</span>(<span class="text-syntax-type">AppError</span>::<span class="text-syntax-type">Database</span>)?
+      .<span class="text-syntax-fn">map</span>(<span class="text-syntax-type">Json</span>)
+      .<span class="text-syntax-fn">ok_or</span>(<span class="text-syntax-type">AppError</span>::<span class="text-syntax-type">NotFound</span> { id })
+}

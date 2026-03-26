@@ -1,0 +1,13 @@
+<span class="text-syntax-punct">#[derive(Deserialize)]</span>
+<span class="text-syntax-keyword">struct</span> <span class="text-syntax-type">CreateMovieRequest</span> {
+&nbsp;&nbsp;&nbsp;&nbsp;title: <span class="text-syntax-type">String</span>,
+&nbsp;&nbsp;&nbsp;&nbsp;release_year: <span class="text-syntax-type">i32</span>,
+}
+
+<span class="text-syntax-comment italic">// POST /movies {"title":"Pulp Fiction","release_year":1994}</span>
+<span class="text-syntax-keyword">async fn</span> <span class="text-syntax-fn">create_movie</span>(<span
+    class="text-syntax-type">Json</span>(req):&nbsp;<span class="text-syntax-type">Json</span>&lt;<span
+    class="text-[#ffcb6b]">CreateMovieRequest</span>&gt;)&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-syntax-fn">println!</span>(<span
+    class="text-syntax-string">"Creating:&nbsp;{}"</span>, req.title);
+}

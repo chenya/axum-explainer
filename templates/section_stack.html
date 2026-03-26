@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}The Axum Stack — Visual Guide{% endblock %}
+{% block breadcrumb %}1 · The Stack{% endblock %}
+
+{% block content %}
+<div class="pb-7 mb-7 border-b border-white/10">
+    <div class="font-mono text-[11px] text-slate-600 tracking-widest uppercase mb-2">01</div>
+    <h1 class="font-display font-extrabold text-3xl lg:text-4xl text-white tracking-tight mb-3">
+        The Stack
+    </h1>
+    <p class="text-slate-400 text-[15px] leading-relaxed max-w-2xl">
+        Axum does not work alone. It sits on top of three other crates, each doing one specific job.
+        Every HTTP request passes through all four layers.
+        <strong class="text-slate-300 font-medium">Click any layer</strong> to learn what it does.
+    </p>
+</div>
+
+<div class="bg-surface-2 border border-white/10 rounded-2xl p-6 mb-5">
+    <div class="space-y-1">
+        {% for layer in layers %}
+
+        <!-- Each layer is a button that HTMX swaps into #layer-detail below.
+         No JavaScript — hx-get does everything. -->
+        <button type="button" class="group w-full flex items-center gap-4 p-4 rounded-xl text-left
+               border border-white/8 bg-surface-2 cursor-pointer
+               transition-all duration-150 {{ layer.button_hover_cls() }}" hx-get="/htmx/layer/{{ layer.id }}"
+            hx-target="#layer-detail" hx-swap="innerHTML" aria-controls="layer-detail"
+            aria-label="Learn about {{ layer.name }}">
+
+            <!-- Left colour band -->
+            <div class="w-1 self-stretch rounded-full transition-colors duration-150 shrink-0
+                {{ layer.band_cls() }}"></div>
+
+            <!-- Content -->
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-0.5">
+                    <span class="text-base" aria-hidden="true">{{ layer.icon }}</span>
+                    <span class="text-[14px] font-semibold text-white">{{ layer.name }}</span>
+                    <span class="ml-auto text-[10px] px-2 py-0.5 rounded-full border {{ layer.badge_cls() }}">
+                        {{ layer.badge }}
+                    </span>
+                </div>
+                <p class="text-[12px] text-white/45 truncate">{{ layer.description }}</p>
+            </div>
+        </button>
+
+
+        {% if !loop.last %}
+        <div class="flex items-center gap-2 px-5 py-1" aria-hidden="true">
+            <div class="flex-1 h-px bg-white/5"></div>
+            <span class="text-[10px] text-white/20 font-mono">passes request ↓</span>
+            <div class="flex-1 h-px bg-white/5"></div>
+        </div>
+
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+<!-- HTMX swap target. aria-live announces updates to screen readers. -->
+<div id="layer-detail" class="bg-surface-2 border border-white/10 rounded-2xl p-6 mb-5 min-h-[90px]" aria-live="polite">
+    <div class="flex flex-col items-center justify-center gap-2 py-4 text-slate-600 text-sm">
+        <span class="text-2xl opacity-40" aria-hidden="true">👆</span>
+        <p>Click any layer above to see a detailed explanation</p>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+    <div class="bg-surface-2 border border-white/10 rounded-2xl p-5">
+        <div class="text-xl mb-3" aria-hidden="true">🔄</div>
+        <h3 class="font-display font-semibold text-white text-[14px] mb-2">Request journey</h3>
+        <p class="text-slate-500 text-[13px] leading-relaxed">
+            A request enters from the bottom — Tokio receives raw bytes, Hyper parses them
+            into HTTP, Tower runs middleware, Axum routes to your handler.
+            The response travels back the same way.
+        </p>
+    </div>
+    <div class="bg-surface-2 border border-white/10 rounded-2xl p-5">
+        <div class="text-xl mb-3" aria-hidden="true">✍️</div>
+        <h3 class="font-display font-semibold text-white text-[14px] mb-2">What you actually write</h3>
+        <p class="text-slate-500 text-[13px] leading-relaxed">
+            You only interact with Axum and a few Tower helpers.
+            You never touch Hyper or Tokio directly except for the two lines that start the server.
+        </p>
+    </div>
+</div>
+
+{% include "partials/section_nav.html" %}
+{% endblock %}

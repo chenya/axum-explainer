@@ -1,0 +1,9 @@
+<div class="flex flex-col gap-3 animate-flow-in">
+  <div class="flex items-center gap-3">
+    <span class="text-2xl" aria-hidden="true">{{ layer.icon }}</span>
+    <span class="font-semibold text-[15px] flex-1 {{ layer.text_cls() }}">{{ layer.name }}</span>
+    <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1
+                 rounded-full border flex-shrink-0  {{ layer.badge_cls() }}">{{ layer.badge }}</span>
+  </div>
+  <p class="text-slate-400 text-[13px] leading-relaxed">{{ layer.detail }}</p>
+</div>

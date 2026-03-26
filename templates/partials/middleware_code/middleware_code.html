@@ -1,0 +1,13 @@
+<span class="text-syntax-keyword">use</span> tower_http::{
+    trace::<span class="text-syntax-type">TraceLayer</span>,
+    timeout::<span class="text-syntax-type">TimeoutLayer</span>,
+    cors::<span class="text-syntax-type">CorsLayer</span>,
+};
+
+<span class="text-syntax-keyword">let</span> app = <span class="text-syntax-type">Router</span>::<span class="text-syntax-fn">new</span>()
+    .<span class="text-syntax-fn">route</span>(<span class="text-syntax-string">"/movies"</span>, <span class="text-syntax-fn">get</span>(list_movies))
+    .<span class="text-syntax-fn">with_state</span>(state)
+    <span class="text-syntax-comment italic">// Written bottom-up; TraceLayer executes FIRST on requests</span>
+    .<span class="text-syntax-fn">layer</span>(<span class="text-syntax-type">TraceLayer</span>::<span class="text-syntax-fn">new_for_http</span>())
+    .<span class="text-syntax-fn">layer</span>(<span class="text-syntax-type">TimeoutLayer</span>::<span class="text-syntax-fn">new</span>(<span class="text-syntax-type">Duration</span>::<span class="text-syntax-fn">from_secs</span>(<span class="text-[#f78c6c]">10</span>)))
+    .<span class="text-syntax-fn">layer</span>(<span class="text-syntax-type">CorsLayer</span>::<span class="text-syntax-fn">permissive</span>());

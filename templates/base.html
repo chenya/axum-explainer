@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" hx-boost="true">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Axum Framework — Visual Guide{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@700;800&family=Inter:wght@400;500&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js" defer></script>
+    <style type="text/tailwindcss">
+        @theme {
+
+    --color-surface-0: #080b11;   /* body background */
+    --color-surface-1: #0d1117;   /* sidebar / header */
+    --color-surface-2: #111722;   /* cards */
+    --color-surface-3: #161d2a;   /* code blocks / inset */
+    --color-surface-4: #060a0f;   /* deepest code bg */
+
+    --color-syntax-keyword:  #c792ea;
+    --color-syntax-fn:       #82aaff;
+    --color-syntax-type:     #ffcb6b;
+    --color-syntax-string:   #c3e88d;
+    --color-syntax-comment:  #4e5a6f;
+    --color-syntax-punct:    #89ddff;
+
+
+    --font-display: 'Syne', sans-serif;
+    --font-body:    'Inter', sans-serif;
+    --font-mono:    'JetBrains Mono', monospace;
+
+    --animate-flow-in: flow-in 0.35s ease forwards;
+
+    --keyframes-flow-in: {
+            from: { opacity: "0"; transform: "translateX(-8px)"; }
+            to:   { opacity: "1"; transform: "translateX(0)"; }
+        };
+    }
+  </style>
+</head>
+
+<body class="font-body bg-surface-0 text-slate-200 flex min-h-screen">
+
+    <!-- CSS-only sidebar: hidden checkbox peer drives sidebar translate and overlay visibility.
+     The hamburger label and close label both target this checkbox. Zero JavaScript. -->
+    <input type="checkbox" id="nav-open" class="peer/nav sr-only">
+
+    <!-- Mobile overlay: visible only when checkbox is checked -->
+    <label for="nav-open" class="hidden peer-checked/nav:block fixed inset-0 bg-black/60 z-40 lg:hidden cursor-pointer"
+        aria-hidden="true"></label>
+
+    <!-- Sidebar -->
+    <aside class="fixed top-0 left-0 h-full w-64 bg-surface-1 border-r border-white/10
+              flex flex-col z-50
+              -translate-x-full peer-checked/nav:translate-x-0 lg:translate-x-0
+              transition-transform duration-200" aria-label="Site navigation">
+
+        <div class="flex items-center gap-3 px-5 py-5 border-b border-white/5">
+            <div class="w-9 h-9 rounded-xl bg-violet-500/10 border border-violet-500/25
+                flex items-center justify-center text-lg flex-shrink-0">⚡</div>
+            <div class="flex-1 min-w-0">
+                <div class="font-display font-bold text-white text-[15px] leading-tight tracking-tight">Axum</div>
+                <div class="text-[11px] text-slate-500 mt-0.5">Visual Guide</div>
+            </div>
+            <label for="nav-open" class="lg:hidden text-slate-500 hover:text-slate-200 cursor-pointer
+                  transition-colors text-xl leading-none w-8 text-center flex-shrink-0"
+                aria-label="Close navigation">✕</label>
+        </div>
+
+        <!-- Nav: hx-boost on <html> means every link here does a full body swap,
+       so Askama always re-renders the sidebar with the correct active state. -->
+        <nav class="flex-1 overflow-y-auto px-2.5 py-3 space-y-0.5" aria-label="Guide sections">
+            {% for section in sections %}
+            <a href="/section/{{ section.slug }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl
+          transition-all duration-150 group
+          {% if current == section.slug %}
+            bg-violet-500/15 border border-violet-500/25
+          {% else %}
+            hover:bg-white/5 border border-transparent
+          {% endif %}">
+
+                <!-- Section number pill -->
+                <span class="w-5 h-5 rounded-md flex items-center justify-center shrink-0
+               text-[10px] font-mono font-bold
+               {% if current == section.slug %}
+                 bg-violet-500 text-white
+               {% else %}
+                 bg-white/5 text-white/30 group-hover:bg-white/10
+               {% endif %}">
+                    {{ loop.index }}
+                </span>
+
+                <span class="text-[13px]
+               {% if current == section.slug %}
+                 text-white font-medium
+               {% else %}
+                 text-white/50 group-hover:text-white/80
+               {% endif %}">
+                    {{ section.title }}
+                </span>
+
+                <!-- Active dot -->
+                {% if current == section.slug %}
+                <span class="ml-auto w-1.5 h-1.5 rounded-full bg-violet-400"></span>
+                {% endif %}
+
+            </a>
+            {% endfor %}
+        </nav>
+
+        <div class="px-4 py-3 border-t border-white/5">
+            <div class="flex flex-wrap gap-1.5 mb-2">
+                {% for tag in ["Axum", "Askama", "HTMX", "Tailwind"] %}
+                <span class="font-mono text-[11px] px-2 py-0.5 rounded-full
+                   bg-white/5 border border-white/10 text-slate-500">{{ tag }}</span>
+                {% endfor %}
+            </div>
+            <p class="text-[11px] text-slate-700 italic">Built with the stack it teaches</p>
+        </div>
+    </aside>
+
+    <!-- Main column -->
+    <div class="flex-1 flex flex-col lg:ml-64 min-h-screen">
+
+
+        <header class="sticky top-0 z-30 h-[52px] flex items-center gap-3 px-4 sm:px-6
+               border-b border-white/8 bg-surface-1/80 backdrop-blur-md flex-shrink-0">
+
+            <label for="nav-open" class="lg:hidden p-1.5 rounded-lg text-slate-500 hover:text-slate-200
+                  hover:bg-white/5 transition-colors leading-none cursor-pointer"
+                aria-label="Open navigation">☰</label>
+
+            <nav aria-label="Breadcrumb" class="flex items-center gap-2 text-[13px]">
+                <a href="/" class="text-slate-600 hover:text-slate-400 transition-colors no-underline">
+                    Axum Guide
+                </a>
+                <span class="text-slate-700" aria-hidden="true">›</span>
+                <span class="text-slate-400 font-medium">{% block breadcrumb %}Home{% endblock %}</span>
+            </nav>
+
+            <!-- After -->
+            <div class="ml-auto flex items-center gap-3">
+
+                <!-- Mini progress pill — only rendered when on a section page (current matches a slug).
+         Outer loop gives us s.id for the counter without needing a Rust current_index field. -->
+                {% for s in sections %}{% if s.slug == current %}
+                <div class="hidden sm:flex items-center gap-2 px-3 py-1
+                rounded-full bg-white/5 border border-white/8">
+                    <div class="flex gap-0.5">
+                        {% for seg in sections %}
+                        <div class="h-1 rounded-full transition-all duration-300
+                        {% if seg.slug == current %}w-3 bg-violet-400
+                        {% else %}w-1 bg-white/15{% endif %}"></div>
+                        {% endfor %}
+                    </div>
+                    <span class="text-[11px] font-mono text-white/30">{{ s.id }}/{{ sections.len() }}</span>
+                </div>
+                {% endif %}{% endfor %}
+
+                <!-- Rust badge (unchanged) -->
+                <span class="text-[12px] font-semibold px-2.5 py-1 rounded-full
+               bg-amber-500/10 border border-amber-500/25 text-amber-400">🦀 Rust</span>
+            </div>
+
+        </header>
+
+        <main id="main-content" class="flex-1 px-6 py-8 max-w-4xl w-full mx-auto">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+</body>
+
+</html>

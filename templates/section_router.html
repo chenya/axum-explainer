@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}Router — Axum Visual Guide{% endblock %}
+{% block breadcrumb %}2 · Router{% endblock %}
+
+{% block content %}
+<div class="pb-7 mb-7 border-b border-white/10">
+    <div class="text-[11px] text-slate-600 tracking-widest uppercase mb-2">02</div>
+    <h1 class="font-display font-extrabold text-3xl lg:text-4xl text-white tracking-tight mb-3">The Router</h1>
+    <p class="text-slate-400 text-[15px] leading-relaxed max-w-2xl">
+        The <code class="font-mono text-sm bg-white/10 text-teal-400 px-1.5 py-0.5 rounded">Router</code> is a lookup
+        table.
+        It maps a URL pattern and HTTP method to a handler function.
+        When a request arrives, Axum finds the first matching row and calls that function.
+        Everything else gets a 404 automatically.
+    </p>
+</div>
+
+<div class="bg-surface-2 border border-white/10 rounded-2xl p-6 mb-5">
+    <h2 class="font-display font-bold text-white text-[15px] mb-1">Route table</h2>
+    <p class="text-slate-500 text-[13px] mb-4">The highlighted row shows
+        <code class="font-mono text-xs bg-white/10 text-teal-400 px-1.5 py-0.5 rounded">GET /movies/42</code>
+        matching <code class="font-mono text-xs bg-white/10 text-teal-400 px-1.5 py-0.5 rounded">GET /movies/{id}</code>
+        -
+        the <code class="font-mono text-xs bg-white/10 text-amber-400 px-1.5 py-0.5 rounded">{id}</code> wildcard
+        captures <code class="font-mono text-xs bg-white/10 text-teal-400 px-1.5 py-0.5 rounded">42</code>.
+    </p>
+    <div class="overflow-hidden rounded-xl border border-white/10">
+
+        <!-- Header row -->
+        <div class="grid grid-cols-[80px_1fr_1fr_1fr] gap-4 px-4 py-2
+                    text-[10px] font-mono uppercase tracking-widest text-white/25
+                    border-b border-white/8 bg-surface-3">
+            <span>Method</span><span>Pattern</span><span>Handler</span><span class="hidden sm:block">Example</span>
+        </div>
+
+        <!-- Data rows -->
+        {% for route in routes %}
+        <div class="grid grid-cols-[80px_1fr_1fr_1fr] gap-4 px-4 py-3 items-center
+                    border-b border-white/5 last:border-0
+                    {% if route.highlight %}bg-violet-500/5 border-l-2 border-l-violet-500/40
+                    {% else %}hover:bg-white/[0.03]{% endif %}
+                    transition-colors duration-100">
+            <span class="text-[11px] font-bold px-2 py-0.5 rounded {{ route.tag_cls() }}">{{ route.method
+                }}</span>
+            <span class="font-mono text-[13px] text-white/70">{{ route.pattern }}</span>
+            <span class="font-mono text-[13px] text-syntax-fn">{{ route.handler }}</span>
+            <span class="hidden sm:block text-[12px] text-white/35 font-mono truncate">{{ route.example }}</span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="bg-surface-2 border border-white/10 rounded-2xl p-6 mb-5">
+    <h2 class="font-display font-bold text-white text-[15px] mb-4">Router code</h2>
+
+    <div class="rounded-2xl overflow-hidden border border-white/10">
+        <!-- Header bar -->
+        <div class="flex items-center justify-between px-4 py-2
+                bg-surface-1 border-b border-white/10">
+            <span class="flex items-center gap-2 text-[11px] text-white/40 font-mono uppercase tracking-widest">
+                <span class="w-2.5 h-2.5 rounded-full bg-rose-500/60"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-500/60"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500/60"></span>
+                <!-- traffic-light dots — visual shorthand for "code editor" -->
+            </span>
+            <span class="text-[11px] text-white/30 font-mono">src/main.rs</span>
+            <span class="text-[11px] px-2 py-0.5 rounded-full bg-violet-500/10
+                   border border-violet-500/20 text-violet-400 uppercase tracking-widest">
+                Rust
+            </span>
+        </div>
+        <!-- Code body -->
+        <pre
+            class="font-mono text-[12.5px] leading-relaxed bg-surface-4 border border-white/10 rounded-xl px-5 py-4 overflow-x-auto text-slate-300">
+            {%- include "partials/router_code/example_router.html" %}</pre>
+    </div>
+
+
+    <div class="flex gap-3 p-4 rounded-xl bg-violet-500/8 border border-violet-500/20 mb-5">
+        <span class="text-violet-400 shrink-0 mt-0.5 text-[15px]">💡</span>
+        <div>
+            <p class="text-[11px] font-semibold text-violet-400 uppercase tracking-widest mb-1">Tip</p>
+            <p class="text-[13px] text-white/60 leading-relaxed">
+                <strong class="text-white/80 font-semibold">The {id} wildcard</strong> — any segment in curly braces
+                <code class="font-mono text-xs bg-white/10 text-teal-400 px-1.5 py-0.5 rounded">{}</code> is a named
+                wildcard. Axum captures whatever value is in that position and makes it available to your handler via
+                the
+                <code class="font-mono text-xs bg-white/10 text-teal-400 px-1.5 py-0.5 rounded">Path</code> extractor.
+                You
+                will see this in section 4.
+            </p>
+        </div>
+    </div>
+
+
+    {% include "partials/section_nav.html" %}
+    {% endblock %}

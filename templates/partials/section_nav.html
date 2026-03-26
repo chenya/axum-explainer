@@ -1,0 +1,80 @@
+<div class="mt-12 pt-6 border-t border-white/8">
+
+    <!-- Progress bar -->
+    <div class="flex items-center gap-3 mb-6">
+        <span class="text-[11px] font-mono text-white/30">Progress</span>
+        <div class="flex-1 h-1 rounded-full bg-white/8">
+            <div class="h-full rounded-full bg-violet-500/60 transition-all duration-300"
+                 style="width: {{ nav.progress_pct }}%"></div>
+        </div>
+        <span class="text-[11px] font-mono text-white/30">{{ nav.current_index + 1 }}/{{ nav.total }}</span>
+    </div>
+
+    <!-- Prev / Next -->
+    <div class="flex items-stretch gap-3">
+
+        <!-- Prev -->
+        {%- if let Some(slug) = nav.prev_slug -%}
+        <a href="/section/{{ slug }}"
+           class="flex items-center gap-2 px-4 py-3 rounded-xl flex-1
+                  border border-white/8 bg-surface-2
+                  hover:border-white/20 hover:bg-surface-2/60
+                  transition-all duration-150 group no-underline">
+            <span class="text-white/30 group-hover:text-white/60
+                         group-hover:-translate-x-0.5 transition-transform duration-150">←</span>
+            <div class="flex flex-col">
+                <span class="text-[10px] text-white/25 uppercase tracking-widest">Previous</span>
+                <span class="text-[13px] text-white/60 group-hover:text-white/90">
+                    {%- if let Some(t) = nav.prev_title %}{{ t }}{% endif -%}
+                </span>
+            </div>
+        </a>
+        {%- else -%}
+        <a href="/"
+           class="flex items-center gap-2 px-4 py-3 rounded-xl flex-1
+                  border border-white/8 bg-surface-2
+                  hover:border-white/20 hover:bg-surface-2/60
+                  transition-all duration-150 group no-underline">
+            <span class="text-white/30 group-hover:text-white/60
+                         group-hover:-translate-x-0.5 transition-transform duration-150">←</span>
+            <div class="flex flex-col">
+                <span class="text-[10px] text-white/25 uppercase tracking-widest">Previous</span>
+                <span class="text-[13px] text-white/60 group-hover:text-white/90">Home</span>
+            </div>
+        </a>
+        {%- endif -%}
+
+        <!-- Next -->
+        {%- if let Some(slug) = nav.next_slug -%}
+        <a href="/section/{{ slug }}"
+           class="flex items-center justify-between gap-2 px-4 py-3 rounded-xl flex-1
+                  border border-violet-500/20 bg-violet-500/8
+                  hover:border-violet-500/40 hover:bg-violet-500/15
+                  transition-all duration-150 group no-underline">
+            <div class="flex flex-col">
+                <span class="text-[10px] text-violet-400/50 uppercase tracking-widest">Next</span>
+                <span class="text-[13px] text-violet-300/80 group-hover:text-violet-200">
+                    {%- if let Some(t) = nav.next_title %}{{ t }}{% endif -%}
+                </span>
+            </div>
+            <span class="text-violet-400/50 group-hover:text-violet-400
+                         group-hover:translate-x-0.5 transition-transform duration-150">→</span>
+        </a>
+        {%- else -%}
+        <a href="/"
+           class="flex items-center justify-between gap-2 px-4 py-3 rounded-xl flex-1
+                  border border-violet-500/20 bg-violet-500/8
+                  hover:border-violet-500/40 hover:bg-violet-500/15
+                  transition-all duration-150 group no-underline">
+            <div class="flex flex-col">
+                <span class="text-[10px] text-violet-400/50 uppercase tracking-widest">Next</span>
+                <span class="text-[13px] text-violet-300/80 group-hover:text-violet-200">Start over</span>
+            </div>
+            <span class="text-violet-400/50 group-hover:text-violet-400
+                         group-hover:translate-x-0.5 transition-transform duration-150">↺</span>
+        </a>
+        {%- endif -%}
+
+    </div>
+</div>
+

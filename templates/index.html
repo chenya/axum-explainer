@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block title %}Axum Framework — Visual Guide for Beginners{% endblock %}
+{% block breadcrumb %}Home{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+
+<div class="relative pb-10 mb-8 border-b border-white/10">
+    <!--
+    <div class="flex flex-wrap gap-2 mb-5">
+        <span class="text-[11px] font-bold uppercase tracking-widest px-3 py-1 rounded-full
+                 bg-white/5 border border-white/10 text-slate-400">Beginner's Guide</span>
+        <span class="text-[11px] font-bold uppercase tracking-widest px-3 py-1 rounded-full
+                 bg-violet-500/10 border border-violet-500/25 text-violet-400">Interactive</span>
+    </div>
+    -->
+
+    <!-- Ambient glow -->
+    <div class="absolute -inset-x-20 -top-10 h-64
+                bg-violet-600/10 blur-3xl rounded-full pointer-events-none"></div>
+
+    <!-- Breadcrumb trail (replaces the two badge spans) -->
+    <div class="flex items-center gap-2 text-[11px] text-white/30 font-mono mb-6">
+        <span>axum</span>
+        <span>→</span>
+        <span class="text-violet-400">interactive guide</span>
+    </div>
+
+    <!--
+    <h1 class="font-display font-extrabold text-4xl lg:text-5xl text-white leading-[1.1] tracking-tight mb-4">
+        Understand the<br>
+        <span class="bg-gradient-to-r from-violet-400 to-blue-400 bg-clip-text text-transparent">
+            Axum Stack
+        </span>
+    </h1>
+    -->
+    <!-- Heading: white-fade gradient instead of violet-to-blue -->
+    <h1 class="font-display font-black text-5xl lg:text-6xl tracking-tight leading-[1.05]
+               bg-gradient-to-br from-white via-white/90 to-white/40
+               bg-clip-text text-transparent mb-4">
+        Understand<br>the Axum Stack
+    </h1>
+
+
+    <p class="text-slate-400 text-[15px] leading-relaxed max-w-lg mb-6">
+        A visual, interactive guide to how Axum works — from the async runtime at the bottom
+        to your handler at the top. Built <em class="not-italic text-teal-400">with</em>
+        the very stack it explains.
+    </p>
+
+
+    <!-- Stats: connected pill bar (replaces 3 separate emoji spans) -->
+    <div class="flex flex-wrap gap-px rounded-xl overflow-hidden border border-white/10 w-fit mb-8">
+        <div class="px-4 py-2 bg-surface-2 text-[12px] text-white/50">8 sections</div>
+        <div class="px-4 py-2 bg-surface-2 text-[12px] text-white/50">interactive</div>
+        <div class="px-4 py-2 bg-surface-2 text-[12px] text-white/50">production patterns</div>
+    </div>
+
+    <!-- group class present so group-hover:translate-x-1 fires correctly -->
+    <a href="/section/stack" class="inline-flex items-center gap-2 px-5 py-2.5
+            bg-violet-700 hover:bg-violet-600 border border-violet-500
+            rounded-xl font-semibold text-white text-[14px]
+            transition-all duration-150 hover:-translate-y-px
+            hover:shadow-lg hover:shadow-violet-900/40 no-underline group">
+        Start with the Stack
+        <span class="inline-block transition-transform duration-150 group-hover:translate-x-1"
+            aria-hidden="true">→</span>
+    </a>
+</div>
+
+<!-- Stack layers preview -->
+<div class="bg-surface-2 border border-white/10 rounded-2xl p-6 mb-5">
+    <h2 class="font-display font-bold text-white text-lg mb-1">The four layers at a glance</h2>
+    <p class="text-slate-500 text-sm mb-5">Every request passes through all of them.</p>
+
+    <div class="space-y-0.5">
+        {% for layer in layers %}
+
+        <div class="flex items-center gap-3 px-4 py-3.5 rounded-xl border
+                transition-transform duration-150 hover:translate-x-1.5
+                {{ layer.card_cls() }}">
+            <span class="text-xl w-7 text-center flex-shrink-0" aria-hidden="true">{{ layer.icon }}</span>
+            <div class="flex-1 min-w-0">
+                <div class="font-semibold text-[13px] {{ layer.text_cls() }}">{{ layer.name }}</div>
+                <div class="text-[12px] text-slate-500 mt-0.5 leading-snug">{{ layer.description }}</div>
+            </div>
+            <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5
+                   rounded-full border flex-shrink-0 {{ layer.badge_cls() }}">{{ layer.badge }}</span>
+        </div>
+
+        {% if !loop.last %}
+        <div class="text-center text-slate-700 text-sm py-0.5" aria-hidden="true">↓</div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Sections grid -->
+<div class="bg-surface-2 border border-white/10 rounded-2xl p-6">
+    <h2 class="font-display font-bold text-white text-lg mb-4">All sections</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+        {% for section in sections %}
+        <a href="/section/{{ section.slug }}" class="group relative flex flex-col gap-2 p-5 rounded-2xl overflow-hidden
+          border border-white/8 bg-surface-2
+          hover:border-white/15 hover:shadow-lg hover:shadow-black/30
+          transition-all duration-200 no-underline" <span class="absolute right-3 top-2 text-[64px] font-black font-mono
+               text-white/[0.035] leading-none select-none pointer-events-none">
+            {{ section.id }}
+            </span>
+
+            <!-- Top row: icon pill + arrow -->
+            <div class="flex items-start justify-between">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0
+                bg-white/5 border border-white/8 text-lg
+                group-hover:bg-violet-500/10 group-hover:border-violet-500/20
+                transition-all duration-200">
+                    {{ section.icon }}
+                </div>
+                <span class="text-white/20 group-hover:text-violet-400
+                 group-hover:translate-x-0.5 transition-all duration-200 text-sm mt-1">
+                    →
+                </span>
+            </div>
+
+            <!-- Text -->
+            <div class="flex flex-col gap-0.5 mt-1">
+                <span class="text-[14px] font-semibold text-white/80
+                 group-hover:text-white transition-colors duration-150">
+                    {{ section.title }}
+                </span>
+                <span class="text-[12px] text-white/35 leading-snug">{{ section.subtitle }}</span>
+            </div>
+
+            <!-- Counter pushed to bottom -->
+            <span class="text-[10px] font-mono text-white/15 mt-auto pt-3">
+                {{ section.id }} / {{ sections.len() }}
+            </span>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

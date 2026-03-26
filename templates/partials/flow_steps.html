@@ -1,0 +1,92 @@
+<!-- Vertical timeline rail (always present) -->
+<div class="absolute left-3 top-2 bottom-2 w-px bg-white/8"></div>
+
+{%- for step in steps -%}
+
+{%- if mode == "reset" -%}
+<div class="relative flex gap-4 pb-3 last:pb-0">
+    <div class="absolute -left-5 w-4 h-4 rounded-full flex items-center justify-center
+              border-2 shrink-0 mt-1 z-10
+              bg-surface-3 border-white/15">
+        <span class="text-[8px] font-mono font-bold text-white/30">{{ step.num }}</span>
+    </div>
+    <div class="flex-1 rounded-xl p-3 border bg-surface-2 border-white/8">
+        <div class="flex items-start justify-between gap-2">
+            <div class="flex-1 min-w-0">
+                <div class="font-semibold text-[13px] text-slate-200 mb-0.5">{{ step.label }}</div>
+                <div class="text-[12px] text-slate-500 leading-relaxed">{{ step.description }}</div>
+            </div>
+            <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full
+                   border flex-shrink-0 font-mono {{ step.tag_cls() }}">{{ step.layer }}</span>
+        </div>
+    </div>
+</div>
+
+{%- elif mode == "error" && step.num >= 7 -%}
+<div class="relative flex gap-4 pb-3 last:pb-0 animate-flow-in">
+    <div class="absolute -left-5 w-4 h-4 rounded-full flex items-center justify-center
+              border-2 shrink-0 mt-1 z-10
+              bg-rose-500/20 border-rose-500/50">
+        <span class="text-[8px] font-mono font-bold text-rose-400">{{ step.num }}</span>
+    </div>
+    <div class="flex-1 rounded-xl p-3 border transition-all duration-300
+              bg-rose-500/5 border-rose-500/15">
+        <div class="flex items-start justify-between gap-2">
+            <div class="flex-1 min-w-0">
+                <div class="font-semibold text-[13px] text-red-400 mb-0.5">
+                    {%- if step.num == 7 -%}Handler — get_movie — movie not found
+                    {%- elif step.num == 8 -%}AppError::IntoResponse — 404
+                    {%- else -%}{{ step.label }}
+                    {%- endif -%}
+                </div>
+                <div class="text-[12px] text-red-400/60 leading-relaxed">
+                    {%- if step.num == 7 -%}fetch_optional returns None → .ok_or(AppError::NotFound { id })? returns Err
+                    {%- elif step.num == 8 -%}AppError::NotFound matched → (StatusCode::NOT_FOUND, "not
+                    found").into_response()
+                    {%- else -%}{{ step.description }}
+                    {%- endif -%}
+                </div>
+            </div>
+            <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full
+                   border flex-shrink-0 font-mono
+                   bg-red-500/10 border-red-500/20 text-red-400">{{ step.layer }}</span>
+        </div>
+    </div>
+</div>
+
+{%- else -%}
+<div class="relative flex gap-4 pb-3 last:pb-0 animate-flow-in">
+    <div class="absolute -left-5 w-4 h-4 rounded-full flex items-center justify-center
+              border-2 shrink-0 mt-1 z-10
+              bg-emerald-500/20 border-emerald-500/50">
+        <span class="text-[8px] font-mono font-bold text-emerald-400">{{ step.num }}</span>
+    </div>
+    <div class="flex-1 rounded-xl p-3 border transition-all duration-300
+              bg-emerald-500/5 border-emerald-500/15">
+        <div class="flex items-start justify-between gap-2">
+            <div class="flex-1 min-w-0">
+                <div class="font-semibold text-[13px] text-emerald-400 mb-0.5">{{ step.label }}</div>
+                <div class="text-[12px] text-slate-500 leading-relaxed">{{ step.description }}</div>
+            </div>
+            <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full
+                   border flex-shrink-0 font-mono {{ step.tag_cls() }}">{{ step.layer }}</span>
+        </div>
+    </div>
+</div>
+{%- endif %}
+
+{%- endfor %}
+
+{%- if mode == "success" %}
+<div class="flex items-center justify-center gap-2 px-4 py-3 mt-1 rounded-xl
+            bg-emerald-500/10 border border-emerald-500/25
+            font-bold text-[13px] text-emerald-400 animate-flow-in">
+    ✓ 200 OK — round trip complete
+</div>
+{%- elif mode == "error" %}
+<div class="flex items-center justify-center gap-2 px-4 py-3 mt-1 rounded-xl
+            bg-red-500/10 border border-red-500/25
+            font-bold text-[13px] text-red-400 animate-flow-in">
+    ✗ 404 Not Found — AppError::NotFound via IntoResponse
+</div>
+{%- endif %}

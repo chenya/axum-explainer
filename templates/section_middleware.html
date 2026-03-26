@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Middleware — Axum Visual Guide{% endblock %}
+{% block breadcrumb %}7 · Middleware{% endblock %}
+
+{% block content %}
+<div class="pb-7 mb-7 border-b border-white/10">
+    <div class="text-[11px] text-slate-600 tracking-widest uppercase mb-2">07</div>
+    <h1 class="font-display font-extrabold text-3xl lg:text-4xl text-white tracking-tight mb-3">Middleware</h1>
+    <p class="text-slate-400 text-[15px] leading-relaxed max-w-2xl">
+        Middleware adds behaviour that runs around every request — logging, auth, timeouts, CORS.
+        Each <code class="font-mono text-sm bg-white/10 text-teal-400 px-1.5 py-0.5 rounded">.layer()</code> call wraps
+        the entire router in a shell.
+        The last layer you write becomes the outermost shell and runs first.
+    </p>
+</div>
+
+<div class="bg-surface-2 border border-white/10 rounded-2xl p-6 mb-5">
+    <h2 class="font-display font-bold text-white text-[15px] mb-1">Nested shells</h2>
+    <p class="text-slate-500 text-[13px] mb-5">Each <code class="font-mono text-xs text-teal-400">.layer()</code> wraps
+        everything above it. A request enters the outermost shell first.</p>
+    <!-- Nested shell visual -->
+    <div class="rounded-xl border border-blue-500/25 bg-blue-500/5 p-4">
+        <div class="flex items-center gap-2 text-[13px] font-semibold text-blue-400 mb-3">
+            <span class="w-2 h-2 rounded-full bg-blue-400 flex-shrink-0"></span>
+            TraceLayer — logs every request and response
+        </div>
+        <div class="rounded-lg border border-amber-500/25 bg-amber-500/5 p-4">
+            <div class="flex items-center gap-2 text-[13px] font-semibold text-amber-400 mb-3">
+                <span class="w-2 h-2 rounded-full bg-amber-400 flex-shrink-0"></span>
+                TimeoutLayer — cancels slow requests after 10s
+            </div>
+            <div class="rounded-lg border border-teal-500/25 bg-teal-500/5 p-4">
+                <div class="flex items-center gap-2 text-[13px] font-semibold text-teal-400 mb-3">
+                    <span class="w-2 h-2 rounded-full bg-teal-400 flex-shrink-0"></span>
+                    CorsLayer — adds CORS headers to responses
+                </div>
+                <div
+                    class="rounded-lg border border-violet-500/30 bg-violet-500/10 px-4 py-3 flex items-center gap-2 text-[13px] font-semibold text-violet-400">
+                    <span>🔀</span> Your Router + Handlers — the actual logic
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="flex gap-3 p-4 rounded-xl bg-amber-500/8 border border-amber-500/20 mb-5">
+    <span class="text-amber-400 shrink-0 mt-0.5 text-[15px]">⚠️</span>
+    <div>
+        <p class="text-[11px] font-semibold text-amber-400 uppercase tracking-widest mb-1">Warning</p>
+        <p class="text-[13px] text-white/60 leading-relaxed">
+            <strong class="text-white/80 font-semibold">The order rule:</strong> Layers are written bottom-up in code
+            but
+            execute top-down on the request. The last
+            <code class="font-mono text-xs bg-white/10 text-teal-400 px-1.5 py-0.5 rounded">.layer()</code>
+            you call wraps everything — so it runs <em class="not-italic text-slate-300">first</em> on every
+            incoming request and <em class="not-italic text-slate-300">last</em> on every outgoing response.
+        </p>
+    </div>
+</div>
+
+
+<div class="bg-surface-2 border border-white/10 rounded-2xl p-6 mb-5">
+    <h2 class="font-display font-bold text-white text-[15px] mb-4">Middleware code</h2>
+    <div class="rounded-2xl overflow-hidden border border-white/10">
+        <!-- Header bar -->
+        <div class="flex items-center justify-between px-4 py-2
+                bg-surface-1 border-b border-white/10">
+            <span class="flex items-center gap-2 text-[11px] text-white/40 font-mono uppercase tracking-widest">
+                <span class="w-2.5 h-2.5 rounded-full bg-rose-500/60"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-500/60"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500/60"></span>
+                <!-- traffic-light dots — visual shorthand for "code editor" -->
+            </span>
+            <span class="text-[11px] text-white/30 font-mono">src/main.rs</span>
+            <span class="text-[11px] px-2 py-0.5 rounded-full bg-violet-500/10
+                   border border-violet-500/20 text-violet-400 uppercase tracking-widest">
+                Rust
+            </span>
+        </div>
+        <!-- Code body -->
+        <pre
+            class="font-mono text-[12.5px] leading-relaxed bg-surface-4 border border-white/10 rounded-xl px-5 py-4 overflow-x-auto text-slate-300">
+            {%- include "partials/middleware_code/middleware_code.html" %}
+        </pre>
+    </div>
+
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+    <div class="bg-surface-2 border border-white/10 rounded-2xl p-5">
+        <div class="text-xl mb-3">🔒</div>
+        <h3 class="font-display font-semibold text-white text-[14px] mb-2">Auth middleware</h3>
+        <p class="text-slate-500 text-[13px] leading-relaxed">Write your own middleware with <code
+                class="font-mono text-xs text-teal-400">axum::middleware::from_fn</code>. An auth layer validates the
+            session cookie and either calls <code class="font-mono text-xs text-teal-400">next.run(req)</code> to
+            continue or returns a 401 immediately.</p>
+    </div>
+    <div class="bg-surface-2 border border-white/10 rounded-2xl p-5">
+        <div class="text-xl mb-3">📊</div>
+        <h3 class="font-display font-semibold text-white text-[14px] mb-2">TraceLayer</h3>
+        <p class="text-slate-500 text-[13px] leading-relaxed"><code
+                class="font-mono text-xs text-teal-400">TraceLayer::new_for_http()</code> integrates with the <code
+                class="font-mono text-xs text-teal-400">tracing</code> crate. Every request gets a span with method,
+            path, and status. Set <code class="font-mono text-xs text-teal-400">RUST_LOG</code> to see structured logs.
+        </p>
+    </div>
+</div>
+
+{% include "partials/section_nav.html" %}
+{% endblock %}

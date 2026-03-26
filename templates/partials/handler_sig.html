@@ -1,0 +1,20 @@
+<pre class="font-mono text-[12.5px] leading-relaxed bg-surface-4 border border-white/10
+     rounded-xl px-5 py-4 overflow-x-auto text-slate-300 tabular-nums"
+    ><span class="text-syntax-keyword">async fn</span> <span class="text-syntax-fn">handler</span>(
+    <span class="text-syntax-type">State</span>(state): <span class="text-syntax-type">State</span>&lt;<span class="text-syntax-type">AppState</span>&gt;,
+{%- if has_path %}
+{%- if has_tuple_path %}
+    <span class="text-syntax-type">Path</span>((movie_id, role_id)): <span class="text-syntax-type">Path</span>&lt;(<span class="text-syntax-type">i32</span>, <span class="text-syntax-type">i32</span>)&gt;,
+{%- else %}
+    <span class="text-syntax-type">Path</span>(id): <span class="text-syntax-type">Path</span>&lt;<span class="text-syntax-type">i32</span>&gt;,
+{%- endif %}
+{%- endif %}
+{%- if has_query %}
+    <span class="text-syntax-type">Query</span>(filter): <span class="text-syntax-type">Query</span>&lt;<span class="text-syntax-type">MovieFilter</span>&gt;,
+{%- endif %}
+{%- if has_body %}
+    <span class="text-syntax-type">Json</span>(payload): <span class="text-syntax-type">Json</span>&lt;<span class="text-syntax-type">CreateMovieRequest</span>&gt;,
+{%- endif %}
+) -&gt; <span class="text-syntax-type">Result</span>&lt;<span class="text-syntax-type">Json</span>&lt;<span class="text-syntax-type">Movie</span>&gt;, <span class="text-syntax-type">AppError</span>&gt; {
+    <span class="text-syntax-comment italic">// your logic here</span>
+}</pre>

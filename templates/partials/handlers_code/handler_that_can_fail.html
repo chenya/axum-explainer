@@ -1,0 +1,6 @@
+<span class="text-syntax-keyword">async fn</span> <span class="text-syntax-fn">get_movie</span>(
+    <span class="text-syntax-type">Path</span>(id): <span class="text-syntax-type">Path</span>&lt;<span class="text-syntax-type">i32</span>&gt;,
+) -> <span class="text-syntax-type">Result</span>&lt;<span class="text-syntax-type">Json</span>&lt;<span class="text-syntax-type">Movie</span>&gt;, <span class="text-syntax-type">AppError</span>&gt; {
+    <span class="text-syntax-keyword">let</span> m = <span class="text-syntax-fn">fetch</span>(id).<span class="text-syntax-keyword">await</span>?;
+    <span class="text-syntax-type">Ok</span>(<span class="text-syntax-type">Json</span>(m))
+}

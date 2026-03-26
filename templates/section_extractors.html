@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}Extractors — Axum Visual Guide{% endblock %}
+{% block breadcrumb %}4 · Extractors{% endblock %}
+
+{% block content %}
+<div class="pb-7 mb-7 border-b border-white/10">
+    <div class="text-[11px] text-slate-600 tracking-widest uppercase mb-2">04</div>
+    <h1 class="font-display font-extrabold text-3xl lg:text-4xl text-white tracking-tight mb-3">Extractors</h1>
+    <p class="text-slate-400 text-[15px] leading-relaxed max-w-2xl">
+        Extractors pull typed data out of the incoming request and deliver it as arguments to your handler.
+        You declare what you want as a typed parameter — Axum handles all the parsing automatically.
+    </p>
+</div>
+
+{% for ext in extractors %}
+
+<div class="bg-surface-2 border border-white/10 rounded-2xl p-6 mb-4">
+    <div class="flex items-center gap-3 mb-3 pb-3 border-b border-white/10">
+        <div class="w-10 h-10 rounded-xl border flex items-center justify-center text-[18px]
+                flex-shrink-0 {{ ext.icon_cls() }}" aria-hidden="true">{{ ext.icon }}</div>
+        <div>
+            <h3 class="font-display font-semibold text-[15px] {{ ext.text_cls() }}">{{ ext.name }}</h3>
+            <code class="font-mono text-[11px] text-slate-500">{{ ext.type_sig }}</code>
+        </div>
+    </div>
+    <p class="text-slate-400 text-[13px] leading-relaxed mb-3">{{ ext.description }}</p>
+
+    <div class="rounded-2xl overflow-hidden border border-white/10">
+        <!-- Header bar -->
+        <div class="flex items-center justify-between px-4 py-2
+                bg-surface-1 border-b border-white/10">
+            <span class="flex items-center gap-2 text-[11px] text-white/40 font-mono uppercase tracking-widest">
+                <span class="w-2.5 h-2.5 rounded-full bg-rose-500/60"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-500/60"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500/60"></span>
+                <!-- traffic-light dots — visual shorthand for "code editor" -->
+            </span>
+            <span class="text-[11px] text-white/30 font-mono">src/main.rs</span>
+            <span class="text-[11px] px-2 py-0.5 rounded-full bg-violet-500/10
+                   border border-violet-500/20 text-violet-400 uppercase tracking-widest">
+                Rust
+            </span>
+        </div>
+        <!-- Code body -->
+        <pre class="font-mono text-[12px] leading-relaxed bg-surface-4 border border-white/10
+         rounded-xl px-5 py-4 overflow-x-auto text-slate-300">{% if ext.name == "Path" %}
+            {%- include "partials/extractors_code/path_extractor.html" -%}
+            {% elif ext.name == "Json" %}
+            {%- include "partials/extractors_code/json_extractor.html" -%}
+            {% elif ext.name == "Query" %}
+            {%- include "partials/extractors_code/query_extractor.html" -%}
+            {% elif ext.name == "State" %}
+            {%- include "partials/extractors_code/state_extractor.html" -%}
+            {% else %}
+            {{ ext.code }}
+            {% endif %}</pre>
+    </div>
+
+</div>
+{% endfor %}
+<div class="rounded-2xl border border-white/10 overflow-hidden mb-5">
+
+    <!-- Playground header -->
+    <div class="flex items-center gap-2 px-4 py-2.5 bg-surface-1 border-b border-white/8">
+        <div class="w-2 h-2 rounded-full bg-violet-400 animate-pulse"></div>
+        <span class="text-[11px] font-mono text-white/40 uppercase tracking-widest">
+            Handler Builder
+        </span>
+    </div>
+
+    <!-- Controls: vertical label above each select, laid out as flex-wrap row -->
+    <div class="flex flex-wrap gap-4 p-4 bg-surface-2 border-b border-white/8">
+        <label class="flex flex-col gap-1">
+            <span class="text-[10px] text-white/30 font-mono uppercase tracking-widest">Path param</span>
+            <select id="sel-path" name="path" class="bg-surface-3 border border-white/10 rounded-lg px-3 py-1.5
+                           text-[13px] text-white/70 font-mono
+                           focus:outline-none focus:border-violet-500/50
+                           hover:border-white/20 transition-colors duration-150" hx-get="/htmx/handler-sig"
+                hx-target="#sig-output" hx-trigger="change" hx-include="#sel-path,#sel-query,#sel-body">
+                <option value="none">none</option>
+                <option value="single" selected>{id} as i32</option>
+                <option value="tuple">{movie_id} + {role_id} tuple</option>
+            </select>
+        </label>
+        <label class="flex flex-col gap-1">
+            <span class="text-[10px] text-white/30 font-mono uppercase tracking-widest">Query params</span>
+            <select id="sel-query" name="query" class="bg-surface-3 border border-white/10 rounded-lg px-3 py-1.5
+                           text-[13px] text-white/70 font-mono
+                           focus:outline-none focus:border-violet-500/50
+                           hover:border-white/20 transition-colors duration-150" hx-get="/htmx/handler-sig"
+                hx-target="#sig-output" hx-trigger="change" hx-include="#sel-path,#sel-query,#sel-body">
+                <option value="none">none</option>
+                <option value="filter">MovieFilter struct</option>
+            </select>
+        </label>
+        <label class="flex flex-col gap-1">
+            <span class="text-[10px] text-white/30 font-mono uppercase tracking-widest">Request body</span>
+            <select id="sel-body" name="body" class="bg-surface-3 border border-white/10 rounded-lg px-3 py-1.5
+                           text-[13px] text-white/70 font-mono
+                           focus:outline-none focus:border-violet-500/50
+                           hover:border-white/20 transition-colors duration-150" hx-get="/htmx/handler-sig"
+                hx-target="#sig-output" hx-trigger="change" hx-include="#sel-path,#sel-query,#sel-body">
+                <option value="none">none</option>
+                <option value="json">JSON body</option>
+            </select>
+        </label>
+    </div>
+
+    <!-- Output — HTMX target sits directly in the card, no inner wrapper -->
+    <div id="sig-output" class="p-4 bg-surface-4 font-mono text-[13px] leading-relaxed min-h-[100px]"
+        hx-get="/htmx/handler-sig" hx-trigger="load" hx-include="#sel-path,#sel-query,#sel-body">
+    </div>
+</div>
+
+{% include "partials/section_nav.html" %}
+{% endblock %}

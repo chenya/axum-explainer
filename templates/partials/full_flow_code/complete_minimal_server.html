@@ -1,0 +1,28 @@
+<span class="text-syntax-punct">#[tokio::main]</span>
+<span class="text-syntax-keyword">async fn</span> <span class="text-syntax-fn">main</span>() {
+    tracing_subscriber::<span class="text-syntax-fn">init</span>();
+    <span class="text-syntax-keyword">let</span> pool = <span class="text-syntax-type">PgPool</span>::<span class="text-syntax-fn">connect</span>(<span class="text-syntax-string">"postgres://localhost/tarantino"</span>)
+        .<span class="text-syntax-keyword">await</span>.<span class="text-syntax-fn">expect</span>(<span class="text-syntax-string">"db connect failed"</span>);
+    <span class="text-syntax-keyword">let</span> state = <span class="text-syntax-type">AppState</span> { db: pool };
+
+    <span class="text-syntax-keyword">let</span> app = <span class="text-syntax-type">Router</span>::<span class="text-syntax-fn">new</span>()
+        .<span class="text-syntax-fn">route</span>(<span class="text-syntax-string">"/movies"</span>,      <span class="text-syntax-fn">get</span>(list_movies).<span class="text-syntax-fn">post</span>(create_movie))
+        .<span class="text-syntax-fn">route</span>(<span class="text-syntax-string">"/movies/{id}"</span>, <span class="text-syntax-fn">get</span>(get_movie).<span class="text-syntax-fn">delete</span>(delete_movie))
+        .<span class="text-syntax-fn">with_state</span>(state)
+        .<span class="text-syntax-fn">layer</span>(<span class="text-syntax-type">TraceLayer</span>::<span class="text-syntax-fn">new_for_http</span>());
+
+    <span class="text-syntax-keyword">let</span> listener = <span class="text-syntax-type">TcpListener</span>::<span class="text-syntax-fn">bind</span>(<span class="text-syntax-string">"0.0.0.0:3000"</span>).<span class="text-syntax-keyword">await</span>.<span class="text-syntax-fn">unwrap</span>();
+    <span class="text-syntax-fn">axum::serve</span>(listener, app).<span class="text-syntax-keyword">await</span>.<span class="text-syntax-fn">unwrap</span>();
+}
+
+<span class="text-syntax-comment italic">// A production handler — uses every concept from sections 2–6</span>
+<span class="text-syntax-keyword">async fn</span> <span class="text-syntax-fn">get_movie</span>(
+    <span class="text-syntax-type">State</span>(state): <span class="text-syntax-type">State</span>&lt;<span class="text-syntax-type">AppState</span>&gt;,    <span class="text-syntax-comment italic">// ← section 6: State</span>
+    <span class="text-syntax-type">Path</span>(id):     <span class="text-syntax-type">Path</span>&lt;<span class="text-syntax-type">i32</span>&gt;,          <span class="text-syntax-comment italic">// ← section 4: Path extractor</span>
+) -> <span class="text-syntax-type">Result</span>&lt;<span class="text-syntax-type">Json</span>&lt;<span class="text-syntax-type">Movie</span>&gt;, <span class="text-syntax-type">AppError</span>&gt; { <span class="text-syntax-comment italic">// ← section 5: Result response</span>
+    sqlx::<span class="text-syntax-fn">query_as!</span>(<span class="text-syntax-type">Movie</span>, <span class="text-syntax-string">"SELECT * FROM movie WHERE id = $1"</span>, id)
+        .<span class="text-syntax-fn">fetch_optional</span>(&amp;state.db).<span class="text-syntax-keyword">await</span>
+        .<span class="text-syntax-fn">map_err</span>(<span class="text-syntax-type">AppError</span>::<span class="text-syntax-type">Database</span>)?
+        .<span class="text-syntax-fn">map</span>(<span class="text-syntax-type">Json</span>)
+        .<span class="text-syntax-fn">ok_or</span>(<span class="text-syntax-type">AppError</span>::<span class="text-syntax-type">NotFound</span> { id })
+}

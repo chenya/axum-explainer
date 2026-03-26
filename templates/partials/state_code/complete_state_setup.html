@@ -1,0 +1,22 @@
+<span class="text-syntax-punct">#[derive(Clone)]</span>
+<span class="text-syntax-keyword">struct</span> <span class="text-syntax-type">AppState</span> {
+    db:     <span class="text-syntax-type">PgPool</span>,        <span class="text-syntax-comment italic">// cheap to clone — Arc inside</span>
+    config: <span class="text-syntax-type">Arc</span>&lt;<span class="text-syntax-type">Config</span>&gt;,  <span class="text-syntax-comment italic">// Arc makes custom types cheap</span>
+}
+
+<span class="text-syntax-keyword">let</span> state = <span class="text-syntax-type">AppState</span> {
+    db:     <span class="text-syntax-type">PgPool</span>::<span class="text-syntax-fn">connect</span>(<span class="text-syntax-string">"postgres://..."</span>).<span class="text-syntax-keyword">await</span>?,
+    config: <span class="text-syntax-type">Arc</span>::<span class="text-syntax-fn">new</span>(<span class="text-syntax-type">Config</span>::<span class="text-syntax-fn">from_env</span>()),
+};
+
+<span class="text-syntax-keyword">let</span> app = <span class="text-syntax-type">Router</span>::<span class="text-syntax-fn">new</span>()
+    .<span class="text-syntax-fn">route</span>(<span class="text-syntax-string">"/movies"</span>, <span class="text-syntax-fn">get</span>(list_movies))
+    .<span class="text-syntax-fn">with_state</span>(state);
+
+<span class="text-syntax-keyword">async fn</span> <span class="text-syntax-fn">list_movies</span>(
+    <span class="text-syntax-type">State</span>(state): <span class="text-syntax-type">State</span>&lt;<span class="text-syntax-type">AppState</span>&gt;,
+) -> <span class="text-syntax-type">Json</span>&lt;<span class="text-syntax-type">Vec</span>&lt;<span class="text-syntax-type">Movie</span>&gt;&gt; {
+    <span class="text-syntax-keyword">let</span> movies = sqlx::<span class="text-syntax-fn">query_as!</span>(<span class="text-syntax-type">Movie</span>, <span class="text-syntax-string">"SELECT * FROM movie"</span>)
+        .<span class="text-syntax-fn">fetch_all</span>(&amp;state.db).<span class="text-syntax-keyword">await</span>.<span class="text-syntax-fn">unwrap</span>();
+    <span class="text-syntax-type">Json</span>(movies)
+}

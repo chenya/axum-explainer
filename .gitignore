@@ -1,1 +1,59 @@
-/target
+# Rust / Cargo
+/target/
+# IntelliJ / JetBrains
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# Editor temporary files
+*.swp
+*~
+*.bak
+*.tmp
+
+# macOS
+.DS_Store
+
+# Environment files (secrets)
+.env
+.env.*.local
+.secret
+
+# Node / frontend artifacts (if you add Tailwind/npm tooling)
+node_modules/
+dist/
+build/
+
+# Logs
+*.log
+
+# Coverage / caches
+coverage/
+.coverage
+.cache/
+.nyc_output/
+
+# Build artifacts / compiled outputs
+*.exe
+*.dll
+*.so
+*.dylib
+*.dSYM
+*.pdb
+*.rlib
+*.rmeta
+
+# Misc
+/target/
+/pkg/
+
+# Cargo bench/test artifacts
+**/target/
+
+# Optional: ignore local IDE run configs or workspace files
+*.idea/*workspace*
+
+# Keep Cargo.lock for applications; remove from gitignore if you want to commit it.
+# (This repo already contains Cargo.lock)

@@ -1,0 +1,13 @@
+<span class="text-syntax-keyword">let</span> app = <span class="text-syntax-type">Router</span>::<span class="text-syntax-fn">new</span>()
+    .<span class="text-syntax-fn">route</span>(<span class="text-syntax-string">"/movies"</span>,      <span class="text-syntax-fn">get</span>(list_movies).<span class="text-syntax-fn">post</span>(create_movie))
+    .<span class="text-syntax-fn">route</span>(<span class="text-syntax-string">"/movies/{id}"</span>, <span class="text-syntax-fn">get</span>(get_movie).<span class="text-syntax-fn">delete</span>(delete_movie))
+    .<span class="text-syntax-fn">route</span>(<span class="text-syntax-string">"/people"</span>,      <span class="text-syntax-fn">get</span>(list_people));
+
+<span class="text-syntax-comment italic">// Nest routers to organise large apps</span>
+<span class="text-syntax-keyword">let</span> movie_routes = <span class="text-syntax-type">Router</span>::<span class="text-syntax-fn">new</span>()
+    .<span class="text-syntax-fn">route</span>(<span class="text-syntax-string">"/"</span>,    <span class="text-syntax-fn">get</span>(list_movies).<span class="text-syntax-fn">post</span>(create_movie))
+    .<span class="text-syntax-fn">route</span>(<span class="text-syntax-string">"/{id}"</span>, <span class="text-syntax-fn">get</span>(get_movie).<span class="text-syntax-fn">delete</span>(delete_movie));
+
+<span class="text-syntax-keyword">let</span> app = <span class="text-syntax-type">Router</span>::<span class="text-syntax-fn">new</span>()
+    .<span class="text-syntax-fn">nest</span>(<span class="text-syntax-string">"/movies"</span>, movie_routes);
+<span class="text-syntax-comment italic">// → GET /movies, GET /movies/{id}, DELETE /movies/{id} all work</span>

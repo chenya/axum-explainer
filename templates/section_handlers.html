@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% block title %}Handlers — Axum Visual Guide{% endblock %}
+{% block breadcrumb %}3 · Handlers{% endblock %}
+
+{% block content %}
+<div class="pb-7 mb-7 border-b border-white/10">
+    <div class="text-[11px] text-slate-600 tracking-widest uppercase mb-2">03</div>
+    <h1 class="font-display font-extrabold text-3xl lg:text-4xl text-white tracking-tight mb-3">Handlers</h1>
+    <p class="text-slate-400 text-[15px] leading-relaxed max-w-2xl">
+        A handler is an <code class="font-mono text-sm bg-white/10 text-teal-400 px-1.5 py-0.5 rounded">async fn</code>
+        the router calls when a route matches.
+        It receives typed data through extractors and returns anything that implements
+        <code class="font-mono text-sm bg-white/10 text-teal-400 px-1.5 py-0.5 rounded">IntoResponse</code>.
+        Axum figures out the rest.
+    </p>
+</div>
+
+<!-- Three rules -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
+    <div class="bg-surface-2 border border-white/10 rounded-2xl p-5 flex gap-3">
+        <div
+            class="w-7 h-7 rounded-full bg-violet-500/10 border border-violet-500/25 text-violet-400 font-bold text-[12px] flex items-center justify-center flex-shrink-0 mt-0.5">
+            1</div>
+        <div>
+            <div class="font-semibold text-[13px] text-white mb-1">Must be <code
+                    class="font-mono text-xs text-teal-400">async fn</code></div>
+            <div class="text-[12px] text-slate-500 leading-relaxed">All Axum handlers are async — they run on the Tokio
+                runtime</div>
+        </div>
+    </div>
+    <div class="bg-surface-2 border border-white/10 rounded-2xl p-5 flex gap-3">
+        <div
+            class="w-7 h-7 rounded-full bg-violet-500/10 border border-violet-500/25 text-violet-400 font-bold text-[12px] flex items-center justify-center flex-shrink-0 mt-0.5">
+            2</div>
+        <div>
+            <div class="font-semibold text-[13px] text-white mb-1">Arguments must be extractors</div>
+            <div class="text-[12px] text-slate-500 leading-relaxed">Every argument implements <code
+                    class="font-mono text-xs text-teal-400">FromRequest</code> — Axum calls them automatically</div>
+        </div>
+    </div>
+    <div class="bg-surface-2 border border-white/10 rounded-2xl p-5 flex gap-3">
+        <div
+            class="w-7 h-7 rounded-full bg-violet-500/10 border border-violet-500/25 text-violet-400 font-bold text-[12px] flex items-center justify-center flex-shrink-0 mt-0.5">
+            3</div>
+        <div>
+            <div class="font-semibold text-[13px] text-white mb-1">Return type: <code
+                    class="font-mono text-xs text-teal-400">IntoResponse</code></div>
+            <div class="text-[12px] text-slate-500 leading-relaxed">Axum calls <code
+                    class="font-mono text-xs text-teal-400">into_response()</code> on whatever you return</div>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+    <div class="bg-surface-2 border border-white/10 rounded-2xl p-5">
+        <h3 class="font-display font-semibold text-white text-[13px] mb-1">Simplest handler</h3>
+        <p class="text-slate-500 text-[12px] mb-3">No inputs. Returns a string. Axum produces a 200 OK with text/plain
+            body.</p>
+
+        <div class="rounded-2xl overflow-hidden border border-white/10">
+            <!-- Header bar -->
+            <div class="flex items-center justify-between px-4 py-2
+              bg-surface-1 border-b border-white/10">
+                <span class="flex items-center gap-2 text-[11px] text-white/40 font-mono uppercase tracking-widest">
+                    <span class="w-2.5 h-2.5 rounded-full bg-rose-500/60"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500/60"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500/60"></span>
+                    <!-- traffic-light dots — visual shorthand for "code editor" -->
+                </span>
+                <span class="text-[11px] text-white/30 font-mono">src/handlers.rs</span>
+                <span class="text-[11px] px-2 py-0.5 rounded-full bg-violet-500/10
+                 border border-violet-500/20 text-violet-400 uppercase tracking-widest">
+                    Rust
+                </span>
+            </div>
+            <!-- Code body -->
+            <pre
+                class="font-mono text-[12px] leading-relaxed bg-surface-4 border border-white/10 rounded-lg px-4 py-3 overflow-x-auto text-slate-300">
+                {%- include "partials/handlers_code/simple_handler.html" %}
+            </pre>
+        </div>
+
+    </div>
+    <div class="bg-surface-2 border border-white/10 rounded-2xl p-5">
+        <h3 class="font-display font-semibold text-white text-[13px] mb-1">Returns JSON</h3>
+        <p class="text-slate-500 text-[12px] mb-3">Wrap any <code
+                class="font-mono text-xs text-teal-400">Serialize</code> type in <code
+                class="font-mono text-xs text-teal-400">Json&lt;T&gt;</code> and Axum sets the Content-Type.</p>
+
+        <div class="rounded-2xl overflow-hidden border border-white/10">
+            <!-- Header bar -->
+            <div class="flex items-center justify-between px-4 py-2
+              bg-surface-1 border-b border-white/10">
+                <span class="flex items-center gap-2 text-[11px] text-white/40 font-mono uppercase tracking-widest">
+                    <span class="w-2.5 h-2.5 rounded-full bg-rose-500/60"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500/60"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500/60"></span>
+                    <!-- traffic-light dots — visual shorthand for "code editor" -->
+                </span>
+                <span class="text-[11px] text-white/30 font-mono">src/handlers.rs</span>
+                <span class="text-[11px] px-2 py-0.5 rounded-full bg-violet-500/10
+                 border border-violet-500/20 text-violet-400 uppercase tracking-widest">
+                    Rust
+                </span>
+            </div>
+            <!-- Code body -->
+            <pre
+                class="font-mono text-[12px] leading-relaxed bg-surface-4 border border-white/10 rounded-lg px-4 py-3 overflow-x-auto text-slate-300">
+                {%- include "partials/handlers_code/returns_json.html" %}</pre>
+        </div>
+
+    </div>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+    <div class="bg-surface-2 border border-white/10 rounded-2xl p-5">
+        <h3 class="font-display font-semibold text-white text-[13px] mb-1">Handler that can fail</h3>
+        <p class="text-slate-500 text-[12px] mb-3">Return <code class="font-mono text-xs text-teal-400">Result&lt;T,
+                AppError&gt;</code>. If it returns <code class="font-mono text-xs text-teal-400">Err</code>, Axum calls
+            <code class="font-mono text-xs text-teal-400">into_response()</code>.
+        </p>
+        <div class="rounded-2xl overflow-hidden border border-white/10">
+            <!-- Header bar -->
+            <div class="flex items-center justify-between px-4 py-2
+              bg-surface-1 border-b border-white/10">
+                <span class="flex items-center gap-2 text-[11px] text-white/40 font-mono uppercase tracking-widest">
+                    <span class="w-2.5 h-2.5 rounded-full bg-rose-500/60"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500/60"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500/60"></span>
+                    <!-- traffic-light dots — visual shorthand for "code editor" -->
+                </span>
+                <span class="text-[11px] text-white/30 font-mono">src/handlers.rs</span>
+                <span class="text-[11px] px-2 py-0.5 rounded-full bg-violet-500/10
+                 border border-violet-500/20 text-violet-400 uppercase tracking-widest">
+                    Rust
+                </span>
+            </div>
+            <!-- Code body -->
+            <pre
+                class="font-mono text-[12px] leading-relaxed bg-surface-4 border border-white/10 rounded-lg px-4 py-3 overflow-x-auto text-slate-300">
+                {%- include "partials/handlers_code/handler_that_can_fail.html" %}</pre>
+        </div>
+
+    </div>
+    <div class="bg-surface-2 border border-white/10 rounded-2xl p-5">
+        <h3 class="font-display font-semibold text-white text-[13px] mb-1">Status code only</h3>
+        <p class="text-slate-500 text-[12px] mb-3">Return just a <code
+                class="font-mono text-xs text-teal-400">StatusCode</code> when there is no body — e.g. after a DELETE.
+        </p>
+        <div class="rounded-2xl overflow-hidden border border-white/10">
+            <!-- Header bar -->
+            <div class="flex items-center justify-between px-4 py-2
+              bg-surface-1 border-b border-white/10">
+                <span class="flex items-center gap-2 text-[11px] text-white/40 font-mono uppercase tracking-widest">
+                    <span class="w-2.5 h-2.5 rounded-full bg-rose-500/60"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500/60"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500/60"></span>
+                    <!-- traffic-light dots — visual shorthand for "code editor" -->
+                </span>
+                <span class="text-[11px] text-white/30 font-mono">src/handlers.rs</span>
+                <span class="text-[11px] px-2 py-0.5 rounded-full bg-violet-500/10
+                 border border-violet-500/20 text-violet-400 uppercase tracking-widest">
+                    Rust
+                </span>
+            </div>
+            <!-- Code body -->
+            <pre
+                class="font-mono text-[12px] leading-relaxed bg-surface-4 border border-white/10 rounded-lg px-4 py-3 overflow-x-auto text-slate-300">
+                {%- include "partials/handlers_code/status_code_only.html" %}</pre>
+        </div>
+
+    </div>
+</div>
+
+{% include "partials/section_nav.html" %}
+{% endblock %}
