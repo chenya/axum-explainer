@@ -11,7 +11,6 @@ use crate::{error::AppError, handlers::render};
 use std::sync::Arc;
 
 // ── Layer detail (HTMX: click a stack layer) ─────────────────────────────────
-
 #[derive(Template)]
 #[template(path = "partials/layer_detail.html")]
 pub struct LayerDetailTemplate {
@@ -28,12 +27,9 @@ pub async fn layer_detail(
         .find(|l| l.id == id.as_str())
         .cloned()
         .ok_or(AppError::NotFound)?;
-    // .unwrap_or_else(|| state.layers[0].clone());
 
     render(LayerDetailTemplate { layer })
 }
-
-// ── Flow animation (HTMX: run/error/reset buttons) ───────────────────────────
 
 #[derive(Template)]
 #[template(path = "partials/flow_steps.html")]
@@ -53,7 +49,6 @@ pub async fn flow_steps(
 }
 
 // ── Handler sig builder (HTMX: extractor dropdowns) ──────────────────────────
-
 #[derive(Template)]
 #[template(path = "partials/handler_sig.html")]
 pub struct HandlerSigTemplate {
